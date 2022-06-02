@@ -3,6 +3,7 @@
 
 <%= link_to 'Add ShortLink', new_short_link_path, class: 'button' %>
 <% if @short_links.any? %>
+  <!-- Didn't use table for mobile response -->
   <div class="table table__shortlinks">
     <div class="table__header">
       <div class="grid table__header-colgroup">

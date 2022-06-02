@@ -8,6 +8,8 @@ class ShortLink < ApplicationRecord
     format: { with: /\A[a-zA-Z0-9\-_]+\z/ }, uniqueness: true
   validates :destination_url, presence: true, length: { in: 2..255 },
     format: { with: URI.regexp }
+
+  # routes should be restricted.
   validate :restrictied_paths_validate
 
   private
