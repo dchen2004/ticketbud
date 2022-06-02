@@ -1,20 +1,23 @@
-<div class="container">
-  <div class="row justify-content-center">
-    <h4 class="mt-4 mb-4 display-4">Show details of shortlink <%= @short_link.id %></h4>
+<%= render 'flash' %>
+
+<h1>
+  Show details of ShortLink #<%= @short_link.id %>
+</h1>
+
+<div class="form">
+  <div class="shortlink__details">
+    <dl>
+      <dt class="table__header-col">ShortLink</dt>
+      <dd><%= forward_url(slug: @short_link.slug) %></dd>
+    </dl>
+    <dl>
+      <dt class="table__header-col">Detination URL:</dt>
+      <dd><%= @short_link.destination_url %></dd>
+    </dl>
   </div>
-  <div class="row justify-content-center">
-    <table class="table">
-      <tbody>
-        <tr>
-          <th>ShortLink:</th>
-          <td><%= forward_url(slug: @short_link.slug) %></td>
-        </tr>
-        <tr>
-          <th>Detination URL:</th>
-          <td><%= @short_link.destination_url %></td>
-        </tr>
-      </tbody>
-    </table>
+
+  <div class="form__actions">
+    <%= link_to 'Edit', edit_short_link_path(@short_link), class: 'button' %>
+    <%= link_to 'Go to Listing', root_path, class: 'button button--blue' %>
   </div>
-  <%= link_to 'Go to Listing', root_path %>
 </div>

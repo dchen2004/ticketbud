@@ -1,9 +1,9 @@
 <% if flash[:alert].present? %>
-  <div class="alert">
-    <p style="color: red;"><%= flash[:alert] %></p>
+  <div class="alert flash">
+    <p><%= flash[:alert] %></p>
   </div>
 <% elsif flash[:notice].present? %>
-  <div class="notice">
-    <p style="color: blue;"><%= flash[:notice] %></p>
+  <div class="notice flash">
+    <p><%= flash[:notice] %></p>
   </div>
 <% end %>

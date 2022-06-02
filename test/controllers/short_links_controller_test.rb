@@ -12,7 +12,7 @@ describe ShortLinksController do
   describe 'shortlink listings' do
     it 'show all shortlinks' do
       get '/short_links'
-      assert_select 'tbody tr', count: 2
+      assert_select '.table__body .table__row', count: 2
     end
 
     it 'show welcome if there is no short link' do
@@ -25,8 +25,8 @@ describe ShortLinksController do
   describe 'show shortlink' do
     it 'show shortlink page' do
       get "/short_links/#{short_link.id}"
-      assert_select 'td', forward_url(slug: short_link.slug)
-      assert_select 'td', short_link.destination_url
+      assert_select 'dd', forward_url(slug: short_link.slug)
+      assert_select 'dd', short_link.destination_url
     end
   end
 
@@ -35,7 +35,7 @@ describe ShortLinksController do
       get "/short_links/new"
       assert_select '#short_link_slug'
       assert_select '#short_link_destination_url'
-      assert_select 'input[type="submit"][value="Create Short link"]'
+      assert_select 'button', /Create Short link/
     end
   end
 
@@ -46,7 +46,7 @@ describe ShortLinksController do
           post '/short_links',
             params: { short_link: short_link_params.merge(slug: nil) }
         end
-        assert_select '.alert'
+        assert_select '.alert', /Slug can't be blank/
       end
 
       it 'should not create if slug is invalid' do
@@ -54,7 +54,7 @@ describe ShortLinksController do
           post '/short_links',
             params: { short_link: short_link_params.merge(slug: 'gith ub') }
         end
-        assert_select '.alert'
+        assert_select '.alert', /Slug is invalid/
       end
 
       it 'should not create if slug is wrong length' do
@@ -62,7 +62,7 @@ describe ShortLinksController do
           post '/short_links',
             params: { short_link: short_link_params.merge(slug: 'g') }
         end
-        assert_select '.alert'
+        assert_select '.alert', /Slug is too short/
       end
 
       it 'should not create if slug is restricted path' do
@@ -70,7 +70,7 @@ describe ShortLinksController do
           post '/short_links',
             params: { short_link: short_link_params.merge(slug: 'short_links') }
         end
-        assert_select '.alert'
+        assert_select '.alert', /Slug is not allowed/
       end
 
       it 'should not create if destination url is empty' do
@@ -78,7 +78,7 @@ describe ShortLinksController do
           post '/short_links',
             params: { short_link: short_link_params.merge(destination_url: nil) }
         end
-        assert_select '.alert'
+        assert_select '.alert', /Destination url can't be blank/
       end
 
       it 'should not create if destination url is not valid url' do
@@ -86,7 +86,15 @@ describe ShortLinksController do
           post '/short_links',
             params: { short_link: short_link_params.merge(destination_url: 'asdfbdsf') }
         end
-        assert_select '.alert'
+        assert_select '.alert', /Destination url is invalid/
+      end
+
+      it 'should not create if slug is existed' do
+        assert_no_difference 'ShortLink.count' do
+          post '/short_links',
+            params: { short_link: short_link_params.merge(slug: 'ticketbud') }
+        end
+        assert_select '.alert', /Slug has already been taken/
       end
     end
 
@@ -108,7 +116,7 @@ describe ShortLinksController do
       get "/short_links/#{short_link.id}/edit"
       assert_select '#short_link_slug'
       assert_select '#short_link_destination_url'
-      assert_select 'input[type="submit"][value="Update Short link"]'
+      assert_select 'button', /Update Short link/
     end
   end
 
@@ -118,7 +126,7 @@ describe ShortLinksController do
       put "/short_links/#{short_link.id}", params: { short_link: short_link_params }
       assert_equal 'github', short_link.reload.slug
       assert_equal 'https://github.com', short_link.destination_url
-      assert_redirected_to root_path
+      assert_redirected_to short_link_path(short_link)
       follow_redirect!
       assert_select '.notice', /The ShortLink has been updated./
     end

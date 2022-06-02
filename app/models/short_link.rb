@@ -5,7 +5,7 @@ class ShortLink < ApplicationRecord
   )
 
   validates :slug, presence: true, length: { in: 2..100 },
-    format: { with: /\A[a-zA-Z0-9\-_]+\z/ }
+    format: { with: /\A[a-zA-Z0-9\-_]+\z/ }, uniqueness: true
   validates :destination_url, presence: true, length: { in: 2..255 },
     format: { with: URI.regexp }
   validate :restrictied_paths_validate
@@ -14,6 +14,6 @@ class ShortLink < ApplicationRecord
 
   def restrictied_paths_validate
     return unless RESTRICTED_PATHS.include?(slug)
-    errors.add :slug, 'not allowed'
+    errors.add :slug, 'is not allowed'
   end
 end
